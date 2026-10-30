@@ -1,0 +1,48 @@
+### 阿米娅风格 LoRA —— 第二版
+### 改动：① 连续台词合并成长回答 ② 混入 300 条档案问答 ③ epoch 3→1 ④ 每 50 步存一次便于挑选
+### 用法：llamafactory-cli train configs\amiya_lora_v2.yaml
+
+### 模型
+model_name_or_path: models/Qwen3-1.7B
+trust_remote_code: true
+
+### 训练方式
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target: all
+
+### 数据
+dataset: amiya_chat_v2
+template: qwen3_nothink
+cutoff_len: 512
+overwrite_cache: true
+preprocessing_num_workers: 4
+
+### 输出
+output_dir: saves/amiya_v2
+logging_steps: 10
+save_steps: 50
+save_total_limit: 14
+plot_loss: true
+overwrite_output_dir: true
+
+### 训练超参
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 4
+learning_rate: 1.0e-4
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: true
+gradient_checkpointing: true
+ddp_timeout: 180000000
+
+### 验证
+val_size: 0.05
+per_device_eval_batch_size: 1
+eval_strategy: steps
+eval_steps: 100

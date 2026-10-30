@@ -1,0 +1,53 @@
+### 阿米娅风格 LoRA —— 第三版（对照实验）
+### 与 v2 的唯一差别：**去掉 300 条档案问答**，其余完全不变
+### 目的：隔离出「循环复读」到底是不是档案数据造成的
+### 用法：llamafactory-cli train configs\amiya_lora_v3.yaml
+
+### 模型
+model_name_or_path: models/Qwen3-1.7B
+trust_remote_code: true
+
+### 训练方式
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target: all
+
+### 数据（2,186 条合并后的台词对话，无档案）
+dataset: amiya_chat_v3
+template: qwen3_nothink
+cutoff_len: 512
+overwrite_cache: true
+preprocessing_num_workers: 4
+
+### 输出
+output_dir: saves/amiya_v3_full
+logging_steps: 10
+save_steps: 50
+save_total_limit: 12
+plot_loss: true
+overwrite_output_dir: true
+
+### 训练超参（与 v2 一致）
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 4
+learning_rate: 1.0e-4
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.05
+bf16: true
+gradient_checkpointing: true
+ddp_timeout: 180000000
+
+### 验证
+val_size: 0.05
+per_device_eval_batch_size: 1
+eval_strategy: steps
+eval_steps: 100
+
+
+
+
